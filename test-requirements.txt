@@ -6,9 +6,9 @@
 #
 astor==0.8.1
     # via -r test-requirements.in
-astroid==2.15.6
+astroid==2.15.8
     # via pylint
-asttokens==2.2.1
+asttokens==2.4.0
     # via stack-data
 async-generator==1.10
     # via -r test-requirements.in
@@ -18,11 +18,11 @@ attrs==23.1.0
     #   outcome
 backcall==0.2.0
     # via ipython
-black==23.7.0 ; implementation_name == "cpython"
+black==23.9.1 ; implementation_name == "cpython"
     # via -r test-requirements.in
-build==0.10.0
+build==1.0.3
     # via pip-tools
-cffi==1.15.1
+cffi==1.16.0
     # via cryptography
 click==8.1.7
     # via
@@ -30,9 +30,9 @@ click==8.1.7
     #   pip-tools
 codespell==2.2.5
     # via -r test-requirements.in
-coverage==7.3.0
+coverage==7.3.1
     # via -r test-requirements.in
-cryptography==41.0.3
+cryptography==41.0.4
     # via
     #   -r test-requirements.in
     #   pyopenssl
@@ -46,7 +46,7 @@ exceptiongroup==1.1.3 ; python_version < "3.11"
     # via
     #   -r test-requirements.in
     #   pytest
-executing==1.2.0
+executing==2.0.0
     # via stack-data
 flake8==6.1.0
     # via
@@ -58,9 +58,11 @@ idna==3.4
     # via
     #   -r test-requirements.in
     #   trustme
+importlib-metadata==6.8.0
+    # via build
 iniconfig==2.0.0
     # via pytest
-ipython==8.12.2
+ipython==8.12.3
     # via -r test-requirements.in
 isort==5.12.0
     # via pylint
@@ -122,15 +124,15 @@ pyflakes==3.1.0
     # via flake8
 pygments==2.16.1
     # via ipython
-pylint==2.17.5
+pylint==2.17.7
     # via -r test-requirements.in
 pyopenssl==23.2.0
     # via -r test-requirements.in
 pyproject-hooks==1.0.0
     # via build
-pyright==1.1.325
+pyright==1.1.329
     # via -r test-requirements.in
-pytest==7.4.0
+pytest==7.4.2
     # via -r test-requirements.in
 six==1.16.0
     # via asttokens
@@ -138,7 +140,7 @@ sniffio==1.3.0
     # via -r test-requirements.in
 sortedcontainers==2.4.0
     # via -r test-requirements.in
-stack-data==0.6.2
+stack-data==0.6.3
     # via ipython
 tomli==2.0.1
     # via
@@ -152,7 +154,7 @@ tomli==2.0.1
     #   pytest
 tomlkit==0.12.1
     # via pylint
-traitlets==5.9.0
+traitlets==5.10.1
     # via
     #   ipython
     #   matplotlib-inline
@@ -160,7 +162,7 @@ trustme==1.1.0
     # via -r test-requirements.in
 types-pyopenssl==23.2.0.2 ; implementation_name == "cpython"
     # via -r test-requirements.in
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -r test-requirements.in
     #   astroid
@@ -168,12 +170,14 @@ typing-extensions==4.7.1
     #   ipython
     #   mypy
     #   pylint
-wcwidth==0.2.6
+wcwidth==0.2.8
     # via prompt-toolkit
 wheel==0.41.2
     # via pip-tools
 wrapt==1.15.0
     # via astroid
+zipp==3.17.0
+    # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
