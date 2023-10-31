@@ -11,28 +11,34 @@ Modeled after the standard library's `asyncio.__main__`. See:
 
     https://github.com/python/cpython/blob/master/Lib/asyncio/__main__.py
 """
+from __future__ import annotations
 
 import ast
 import code
 import concurrent.futures
-import contextlib
 import inspect
 import sys
 import threading
 import types
+from collections.abc import Awaitable, Mapping
+from typing import Any, TypeVar
 
 import trio
 
+T = TypeVar("T")
+
 
 class TrioInteractiveConsole(code.InteractiveConsole):
-    def __init__(self, locals, nursery):
+    __slots__ = ("nursery",)
+
+    def __init__(self, locals: Mapping[str, Any] | None, nursery: trio.Nursery) -> None:
         super().__init__(locals)
         self.compile.compiler.flags |= ast.PyCF_ALLOW_TOP_LEVEL_AWAIT
         self.nursery = nursery
 
-    def runcode(self, code):
-        func = types.FunctionType(code, self.locals)
-        future = concurrent.futures.Future()
+    def runcode(self, code: types.CodeType) -> None:
+        func = types.FunctionType(code, dict(self.locals))
+        future: concurrent.futures.Future[object] = concurrent.futures.Future()
 
         try:
             result = func()
@@ -50,7 +56,8 @@ class TrioInteractiveConsole(code.InteractiveConsole):
                 await_in_bg.start()
 
         try:
-            return future.result()
+            future.result()
+            return
         except SystemExit:
             raise
         except KeyboardInterrupt:
@@ -59,7 +66,7 @@ class TrioInteractiveConsole(code.InteractiveConsole):
             self.showtraceback()
 
 
-async def _await(awaitable, future):
+async def _await(awaitable: Awaitable[T], future: concurrent.futures.Future[T]) -> None:
     try:
         value = await awaitable
     except SystemExit:
@@ -70,11 +77,48 @@ async def _await(awaitable, future):
         future.set_result(value)
 
 
-async def main(repl_locals):
+async def main(repl_locals: dict[str, object]) -> None:
     async with trio.open_nursery() as nursery:
         console = TrioInteractiveConsole(repl_locals, nursery)
         banner = (
+            # types: attr-defined error: Module "trio" does not explicitly export attribute "__version__"
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_io_windows.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_local.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_mock_clock.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_multierror.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_parking_lot.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_run.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_unbounded_queue.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_wakeup_socketpair.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_dtls.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_highlevel_generic.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_highlevel_socket.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_path.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_socket.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_ssl.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_subprocess.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_subprocess_platform/waitid.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_sync.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_threads.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_unix_pipes.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_util.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/lowlevel.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/__init__.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/_check_streams.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/_checkpoints.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/_memory_streams.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/_sequencer.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/testing/_trio_test.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/__init__.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_channel.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_asyncgens.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_entry_queue.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_exceptions.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_generated_instrumentation.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_io_common.py
+            # types: note: Another file has errors: /home/samuel/Desktop/Github Clones/trio-wbadart/trio/_core/_io_epoll.py
             f"Trio {trio.__version__}, "
+            # types: ^^^^^^^^^^^^^^^
             f"Python {sys.version} on {sys.platform}\n"
             f'Use "await" directly instead of "trio.run()".\n'
             f'Type "help", "copyright", "credits" or "license" '
@@ -85,9 +129,6 @@ async def main(repl_locals):
 
 
 if __name__ == "__main__":
-    with contextlib.suppress(ModuleNotFoundError):
-        pass
-
     repl_locals = {"trio": trio}
     for key in {
         "__name__",
